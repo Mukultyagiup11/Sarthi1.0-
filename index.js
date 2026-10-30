@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import router from './src/routes/v1/sarthi';
 dotenv.config();
 const app = express();
 
@@ -17,6 +18,8 @@ app.get('/',(req,res)=>{
    })
 }
 )
+
+app.use('/v1',router);
 
 
 const PORT = process.env.PORT||3000;
