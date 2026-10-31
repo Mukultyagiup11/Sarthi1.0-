@@ -32,3 +32,32 @@ export const captainInsertQuery =
     VALUES (?, ?, ?, ?, ?, ?)
 `;
 
+export const loginQuery =
+`
+ SELECT
+ u.id,
+ u.first_name,
+ u.last_name,
+ u.email,
+ u.phone,
+ u.password,
+ u.account_type,
+ c.vehicle_type,
+ c.vehicle_number,
+ c.vehicle_number
+ FROM sarthi_user_data AS u
+ LEFT JOIN sarthi_captain_data AS c
+ ON c.user_id = u.id
+ WHERE u.email = ? OR u.phone = ?
+ LIMIT 1
+`;
+
+export const statusUpdateQuery = 
+`
+  UPDATE sarthi_captain_data 
+  SET status = CASE 
+  WHEN status = 'offline' THEN 'available'
+  ELSE status
+  END
+  WHERE user_id = ?
+`;

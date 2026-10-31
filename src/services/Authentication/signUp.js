@@ -4,13 +4,15 @@ import bcrypt from 'bcryptjs';
 import {
     checkExistingUserQuery,
     userInsertQuery,
-    captainInsertQuery
+    captainInsertQuery,
+    loginQuery
  } from '../../database/models/validation.js';
-const ACCOUNT_TYPE= {
+
+ const ACCOUNT_TYPE= {
    USER:1,
    CAPTAIN:2
 }
-
+//signupAPI
 export const signUp = async(data)=>{
     const {firstName,
         lastName,email,
@@ -42,8 +44,8 @@ export const signUp = async(data)=>{
     }
     const normalizedEmail = String(email).trim().toLowerCase();
     const normalizedPhone = String(number).trim();
-    //EMAIL test case
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {  //EMAIL test case
             return {
                 statusCode:200,
                 body:{
@@ -52,8 +54,8 @@ export const signUp = async(data)=>{
                 }
             }
         }
-   //Number Test Case
-   if (!/^\+?[0-9]{7,15}$/.test(normalizedPhone)){
+  
+   if (!/^\+?[0-9]{7,15}$/.test(normalizedPhone)){  //Number Test Case
             
         return {
             statusCode:200,
@@ -64,8 +66,8 @@ export const signUp = async(data)=>{
         }
         }
 
-    //Password Test Case
-      if(typeof password !== "string" ||password.length < 8 ||Buffer.byteLength(password, "utf8") > 72){
+    
+      if(typeof password !== "string" ||password.length < 8 ||Buffer.byteLength(password, "utf8") > 72){  //Password Test Case
         return {
             statusCode:200,
                 body:{
@@ -94,8 +96,8 @@ export const signUp = async(data)=>{
                 }
         }
      }
-    //validate optional lat and lang
-    const lat = latitude === undefined || latitude === null || latitude === "" ? null:latitude;
+    
+    const lat = latitude === undefined || latitude === null || latitude === "" ? null:latitude;  //validate optional lat and lang
     const lang = longitude === undefined || longitude === null || longitude === "" ? null : longitude;
     if ((lat !== null &&(!Number.isFinite(lat) || lat < -90 || lat > 90)) ||(lang !== null && (!Number.isFinite(lang) || lang < -180 || lang > 180))){
             return{
@@ -215,6 +217,10 @@ export const signUp = async(data)=>{
     }
 
 }
+
+
+//loginAPI
+
 
 export default {
     signUp
