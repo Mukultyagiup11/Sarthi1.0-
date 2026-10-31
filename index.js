@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import router from './src/routes/v1/sarthi';
+import router from './src/routes/v1/sarthi.js';
 dotenv.config();
 const app = express();
 

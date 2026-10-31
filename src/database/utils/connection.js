@@ -16,7 +16,7 @@ class Connection{
                 ...config[type].reader,
                 waitForConnections:true,
                 connectionLimit:10,
-                queueLimit:0
+                queueLimit:100
 
             });
         }
@@ -31,7 +31,7 @@ class Connection{
         ...config[type].writer,
         waitForConnections: true,
         connectionLimit: 10,
-        queueLimit: 0,
+        queueLimit: 100,
       });
     }
     return this.writerPools[type];

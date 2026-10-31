@@ -1,4 +1,4 @@
-import validation from "./validation"
+import validation from "./validation.js"
 import authenticationService from '../services/Authentication/signUp.js';
 
 export const signUp = async(req,res)=>{
@@ -16,7 +16,10 @@ export const signUp = async(req,res)=>{
       console.log(`Unable to singup the user.`);
       return res.status(500).send({
         success:false,
-        message:`Unable to singup the user.`
+        message:`Unable to singup the user.`,
+        error: process.env.NODE_ENV === "development"
+            ? error.message
+            : undefined
       })
    }
 }
