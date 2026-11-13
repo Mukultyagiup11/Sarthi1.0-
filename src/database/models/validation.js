@@ -44,7 +44,9 @@ export const loginQuery =
  u.account_type,
  c.vehicle_type,
  c.vehicle_number,
- c.vehicle_number
+ c.vehicle_number,
+ c.status,
+ c.city
  FROM sarthi_user_data AS u
  LEFT JOIN sarthi_captain_data AS c
  ON c.user_id = u.id

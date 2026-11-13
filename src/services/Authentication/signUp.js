@@ -5,7 +5,8 @@ import {
     checkExistingUserQuery,
     userInsertQuery,
     captainInsertQuery,
-    loginQuery
+    loginQuery,
+    statusUpdateQuery
  } from '../../database/models/validation.js';
 
  const ACCOUNT_TYPE= {
@@ -220,8 +221,97 @@ export const signUp = async(data)=>{
 
 
 //loginAPI
+export const login = async(data)=>{
+   const {identifier,password,type}=data;
+   if(typeof identifier!=="string"||identifier.trim().length === 0||typeof password!="string" || password.length === 0||!type){
+        console.log(`identifier,password and type are required.`);
+        return {
+            statusCode:400,
+            body:{
+                success:false,
+                message:`identifier,type and password are required.`
+            }
+        }
+   }
+   const normalizedIdentifier = identifier.trim();
+   const reader = await connection.getReaderConnection(type);
+   const writer = await connection.getWriterConnection(type);
+   try {
+    const [rows]= await reader.query(loginQuery,[normalizedIdentifier,normalizedIdentifier]);
+   if(rows.length === 0){
+       return{
+        statusCode:400,
+        body:{
+            success:false,
+            message:`Invalid email/phone.`
+        }
+       }
+   }
 
+   const userData = rows[0];
+   const isPasswordValid = await bcrypt.compare(password,userData.password);
+   if(!isPasswordValid){
+     return {
+        statusCode:400,
+        body:{
+            success:false,
+            message:`password is inavlid.`
+        }
+     }
+   }
+   const user={
+       id:userData.id,
+       name:userData.first_name+userData.last_name,
+       email:userData.email,
+       phoneNumber:userData.phone,
+       accountType:Number(userData.account_type) === 2 ? "Captain":"User"
+   }
+
+   if(Number(userData.account_type) === 2){
+     await writer.query(statusUpdateQuery,[userData.id]);
+     if(userData.status === 'offline'){
+        userData.status ==='available'
+      }
+     }
+
+   if(Number(userData.account_type) === 2){
+    // await writer.query(statusUpdateQuery,[userData.id]);
+    user.captain={
+        vechileType:userData.vehicle_type,
+        vechileNumber:userData.vehicle_number,
+        city:userData.city,
+        status:userData.status
+        }
+     }
+     const token = genrateToken.createToken(userData.id,userData.account_type);
+     return {
+        statusCode:200,
+        body:{
+            success:true,
+            user,
+            token
+        }
+     }
+   } catch (error) {
+      console.log(`Internal server error:`+error);
+      return {
+        statusCode:500,
+        body:{
+            success:false,
+            message:`Inernal server error.`
+        }
+      }
+   }finally{
+      if(reader){
+        await reader.end();
+      }
+      if(writer){
+        await writer.end();
+      }
+   }
+}
 
 export default {
-    signUp
+    signUp,
+    login
 }

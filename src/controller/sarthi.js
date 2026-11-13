@@ -24,6 +24,22 @@ export const signUp = async(req,res)=>{
    }
 }
 
+export const login = async(req,res)=>{
+   try {
+      const data = validation.validateRequest(req,res);
+      if(!data)return;
+      const result = await authenticationService.login(data);
+      return res.status(result.statusCode||200).send(result.body||result);
+   } catch (error) {
+      console.log(`Error in login.`);
+      return res.status(500).send({
+         success:false,
+         message:`Error in login.`
+      })
+   }
+}
+
 export default {
-     signUp
+     signUp,
+     login
 }
