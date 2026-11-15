@@ -16,7 +16,9 @@ router.post('/operations/login',async(req,res)=>{
 
 
 //App Intro record API
-
+router.post('/operations/introStatusUpDate',async(req,res)=>{
+    return sarthiController.introApp(req,res);
+})
 export default router;
 
 

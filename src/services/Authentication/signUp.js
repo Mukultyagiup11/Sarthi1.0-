@@ -6,9 +6,10 @@ import {
     userInsertQuery,
     captainInsertQuery,
     loginQuery,
-    statusUpdateQuery
- } from '../../database/models/validation.js';
+    statusUpdateQuery,
 
+ } from '../../database/models/validation.js';
+import {updateIntroJourneyOfAUser,checkIntroQuery}  from '../../database/models/homeQuery.js'
  const ACCOUNT_TYPE= {
    USER:1,
    CAPTAIN:2
@@ -284,12 +285,21 @@ export const login = async(data)=>{
         }
      }
      const token = genrateToken.createToken(userData.id,userData.account_type);
+      const [intro] = await reader.query(checkIntroQuery,[userData.id]);
+      if(intro.length === 0){
+          await writer.query(updateIntroJourneyOfAUser,[userData.id,false,null]);  
+      }
+      let intro_completed = 1;
+      if(intro.length === 0||Number(intro[0].intro_completed) === 0){
+          intro_completed = 0;
+      }
      return {
         statusCode:200,
         body:{
             success:true,
             user,
-            token
+            token,
+            intro_completed
         }
      }
    } catch (error) {
